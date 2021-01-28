@@ -1,0 +1,87 @@
+.commentsContainer {
+    width: 100%;
+    font-size: 20px;
+    font-family: Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+}
+
+.commentsSection {
+    margin: 2% 10%;
+    padding: 2%;
+}
+.moreCommentsContainer {
+    margin-top: -3%;
+    display: grid;
+}
+
+li {
+    display: grid;
+    grid-gap: 15px;
+    margin: 1% 0%;
+    padding: 1% 2%;
+    list-style-type: none;
+    box-shadow: 0px 0px 5px 0px rgb(31, 31, 31, 0.2);
+    transition: 0.3s;
+}
+
+li:hover {
+    box-shadow: 0px 0px 8px 1px rgb(31, 31, 31, 0.2);
+}
+
+ul {
+    padding: 10px 0px 0px 0px;
+    display: grid;
+    grid-gap: 5px;
+}
+
+.listHeader {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    font-weight: 500;
+    border-bottom: 1px solid #dddddd;
+}
+
+.listAuthor {
+    justify-self: flex-start;
+}
+
+.listDate {
+    justify-self: flex-end;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    text-align: center;
+    font-size: 15px;
+    font-style: italic;
+    font-weight: 400;
+    color: #6b6b6b;
+}
+
+.listText {
+    color:rgb(48, 48, 48);
+    font-style: italic;
+}
+
+.showMoreBtnContainer {
+    display: grid;
+}
+
+.showMoreBtn {
+    font-family: Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+    font-weight: 500;
+    font-size: 15px;
+    height: 30px;
+    background-color: #5486b6;
+    color: white;
+    border: none;
+    outline: none;
+    cursor: pointer;
+    border-radius: 2px;
+}
+
+.showMoreBtn:hover {
+    background-color: #2f5a81;
+}
+
+.showMoreBtn:active {
+    transform: scale(0.98);
+    box-shadow: inset 0px 0px 5px 1px rgb(31, 31, 31, 0.5);
+}
