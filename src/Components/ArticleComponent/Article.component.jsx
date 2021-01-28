@@ -3,21 +3,20 @@ import moment from 'moment';
 
 import './Article.component.css';
 
-function Article() {
-    const article = document.__article;
+function Article(props) {
 
     return(
         <div className='articleContainer'>
 
             <div className='articleHeader'>
-                {article.author}
+                {props.author}
             </div>
 
-            <article>{article.text}</article>
+            <article>{props.text}</article>
 
             <div className='articleFooter'>
                 <div className='articleDate'>
-                    <span>published at: {moment.utc(article.date).format('YYYY-MM-DD')} / {moment.utc(article.date).format('HH:mm')}</span>
+                    <span>published at: {props.date} / {props.time}</span>
                 </div>
             </div>
             

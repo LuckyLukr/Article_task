@@ -2,87 +2,89 @@ import React, { useState, useEffect} from 'react';
 import moment from 'moment';
 import './App.css';
 
-import Article from './Components/Article-component/Article.component';
-import Comments from './Components/Comments-component/Comments.component';
-import MoreComments from './Components/Comments-component/More-comments-component/More.comments.component';
+import Article from './Components/ArticleComponent/Article.component';
+import Comments from './Components/CommentsComponent/Comment.component';
+import MoreComments from './Components/CommentsComponent/MoreComments.component';
 
 function App() {
-  const [comments, setComments ] = useState(document.__comments);
-  const [moreComments, setMoreComments ] = useState(document.__moreComments);
+  const [article, setArticle] = useState({})
+  const [comments, setComments ] = useState([]);
+  const [moreComments, setMoreComments ] = useState([]);
   const [showMoreComments, setShowMoreComments] = useState(false);
-  const [loaded, setLoaded] = useState(false);
-  const [articleLoaded, setArticleLoaded] = useState(false);
-  const [commentsLoaded, setCommentsLoaded] = useState(false);
-
 
   useEffect(() => {
+    loadArticle();
+    loadComments();
+    sortComments()
+  }, [comments.length, moreComments.length])
 
-      //Sorting comments from newest to oldest
-      comments.push(...moreComments);
-      comments.sort((a, b) => {
-          let dateA = a.date.toUpperCase();
-          let dateB = b.date.toUpperCase();
-          if (dateA < dateB) {
-            return 1;
-          }
-          if (dateA > dateB) {
-            return -1;
-          }
-          return 0;
-      });
+  function sortComments() {
+    comments.push(...moreComments);
+    comments.sort((a, b) => {
+        let dateA = a.date.toUpperCase();
+        let dateB = b.date.toUpperCase();
+        if (dateA < dateB) {
+          return 1;
+        }
+        if (dateA > dateB) {
+          return -1;
+        }
+        return 0;
+    });
+    const removed = comments.splice(2)
+    return setMoreComments(removed);
+  }
 
-      const removed = comments.splice(2)
-      setMoreComments(removed);
-      //End of sorting comments from newest to oldest
+  function fetchArticle() {
+    return new Promise(resolve => {
+            setTimeout(() => {
+              resolve(document.__article);
+            }, 2000);
+          });
+  }
 
-      //Async functions with setTimeout to simulate data loading on page
-      const helloArticle = () => {
-        return new Promise(resolve => {
-          setTimeout(() => {
-            resolve(setLoaded(true));
-          }, 2000);
-        });
-      }
-      const loadingArticle = async() => {
-        const hello = await helloArticle();
-        return () => clearTimeout(hello);
-      }
+  function fetchComments() {
+    return new Promise(resolve => {
+            setTimeout(() => {
+              resolve(document.__comments);
+            }, 2000);
+          });
+  }
 
-      const helloComments = async() => {
-        await helloArticle();
-        return new Promise(resolve => {
-          setTimeout(() => {
-            resolve(setArticleLoaded(true));
-          }, 2000);
-        });
-      }
-      const loadingComments = async() => {
-        const hello = await helloComments();
-        return () => clearTimeout(hello);
-      }
-      
-      const helloMoreComments = async() => {
-        await helloComments();
-        return new Promise(resolve => {
-          setTimeout(() => {
-            resolve(setCommentsLoaded(true));
-          }, 2000);
-        });
-      }
-      const loadingMoreComments = async() => {
-        const hello = await helloMoreComments();
-        return () => clearTimeout(hello);
-      }
-       
-      loadingArticle();
-      loadingComments();
-      loadingMoreComments();
-      //End of Async functions with setTimeout to simulate data loading on page
-      
-  }, []);
+  function fetchMoreComments() {
+    return new Promise(resolve => {
+            setTimeout(() => {
+              resolve(document.__moreComments);
+            }, 2000);
+          });
+  }
 
-  const handleShowMoreComments = () => showMoreComments ? setShowMoreComments(false) : setShowMoreComments(true);
+  async function loadArticle() {
+    const article = await fetchArticle();
+    return setArticle(article);
+  }
 
+  async function loadComments() {
+    await loadArticle();
+    const comments = await fetchComments();
+    return setComments(comments);
+  }
+
+  async function loadMoreComments() {
+    const moreComments = await fetchMoreComments();
+    return setMoreComments(moreComments);
+  }
+
+  function handleMoreComments() {
+    if (showMoreComments) {
+      setShowMoreComments(false);
+      setMoreComments([]);
+      loadComments();
+    } else {
+      setShowMoreComments(true);
+      loadMoreComments();
+    }
+  }
 
   const commentsList = comments.map( element => 
     <Comments 
@@ -93,7 +95,6 @@ function App() {
       text={element.text}    
     />
   );
-    
   const moreCommentsList = moreComments.map( element => 
     <MoreComments 
       id={element.id}
@@ -104,37 +105,43 @@ function App() {
     />
   );
 
-
   return (
     <div className="app">
 
-      <div style={{display:loaded ? 'none' : 'block' }} className='onLoading'>
-          <img src='https://media.giphy.com/media/sSgvbe1m3n93G/giphy.gif' alt='Loading...' style={{height: '50px'}} />
+      <div style={{display: article.author === undefined ? 'block' : 'none'}} className='onLoading'>
+        <img src='https://upload.wikimedia.org/wikipedia/commons/b/b1/Loading_icon.gif' alt='loading...' style={{height: '150px'}} />
       </div>
-
-      <div style={{display:loaded ? 'flex' : 'none' }} className='content'>
-        <Article />
-        <div  style={{display:articleLoaded ? 'grid' : 'none' }} className='commentsContainer'>
+      <div style={{display: article.author === undefined ? 'none' : 'flex'}} className='content'>
+        <Article 
+          author={article.author} 
+          text={article.text} 
+          date={moment.utc(article.date).format('DD/MM/YYYY')} 
+          time={moment.utc(article.date).format('HH:mm')}
+          />
+        <div style={{display: comments.length === 0 ? 'none' : 'grid'}} className='commentsContainer'>
 
           <ul>
               {commentsList}
               { showMoreComments ? moreCommentsList : null }
           </ul>
 
-          <div style={{display:commentsLoaded ? 'grid' : 'none' }} className='showMoreBtnContainer'>
-              <button type='submit' className='showMoreBtn' onClick={() => handleShowMoreComments()} >
+          <div className='showMoreBtnContainer'>
+
+              <div style={{display: showMoreComments && moreComments.length === 0 ? 'block' : 'none'}} className='onLoading'>
+                <img src='https://upload.wikimedia.org/wikipedia/commons/b/b1/Loading_icon.gif' alt='loading...' style={{height: '150px'}} />
+              </div>
+              <button style={{display: showMoreComments && moreComments.length === 0 ? 'none' : 'block'}} 
+                      type='submit' 
+                      className='showMoreBtn' 
+                      onClick={() => handleMoreComments()} >
                   { showMoreComments ? <span>Hide comments</span> : <span>More comments</span>}
               </button>
-          </div>
-          
-          <div style={{display:commentsLoaded ? 'none' : 'block' }} className='onLoading'>
-              <img src='https://media.giphy.com/media/sSgvbe1m3n93G/giphy.gif' alt='Loading...' style={{height: '50px'}} />
-          </div>
 
-      </div>
+          </div>
+        </div>
 
-      <div style={{display:articleLoaded ? 'none' : 'block' }} className='onLoading'>
-           <img src='https://media.giphy.com/media/sSgvbe1m3n93G/giphy.gif' alt='Loading...' style={{height: '50px'}} />
+        <div style={{display: comments.length === 0 ? 'block' : 'none'}} className='onLoading'>
+          <img src='https://upload.wikimedia.org/wikipedia/commons/b/b1/Loading_icon.gif' alt='loading...' style={{height: '150px'}} />
         </div>
 
       </div>

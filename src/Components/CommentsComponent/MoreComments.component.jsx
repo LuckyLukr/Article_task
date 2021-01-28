@@ -1,6 +1,6 @@
 import React from 'react';
 
-import './More.comments.component.css';
+import './Comments.component.css';
 
 function MoreComments(props) {
 
