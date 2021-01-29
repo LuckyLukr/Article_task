@@ -13,10 +13,8 @@ function App() {
   const [showMoreComments, setShowMoreComments] = useState(false);
 
   useEffect(() => {
-    loadArticle();
-    loadComments();
     sortComments()
-  }, [comments.length, moreComments.length])
+  }, [comments.length,moreComments.length])
 
   function sortComments() {
     comments.push(...moreComments);
@@ -78,13 +76,16 @@ function App() {
   function handleMoreComments() {
     if (showMoreComments) {
       setShowMoreComments(false);
-      setMoreComments([]);
-      loadComments();
-    } else {
+    } else if (moreComments.length === 0) {
       setShowMoreComments(true);
       loadMoreComments();
+    } else {
+      setShowMoreComments(true);
     }
   }
+
+  loadArticle();
+  loadComments();
 
   const commentsList = comments.map( element => 
     <Comments 
@@ -118,6 +119,7 @@ function App() {
           date={moment.utc(article.date).format('DD/MM/YYYY')} 
           time={moment.utc(article.date).format('HH:mm')}
           />
+
         <div style={{display: comments.length === 0 ? 'none' : 'grid'}} className='commentsContainer'>
 
           <ul>
@@ -130,6 +132,7 @@ function App() {
               <div style={{display: showMoreComments && moreComments.length === 0 ? 'block' : 'none'}} className='onLoading'>
                 <img src='https://upload.wikimedia.org/wikipedia/commons/b/b1/Loading_icon.gif' alt='loading...' style={{height: '150px'}} />
               </div>
+
               <button style={{display: showMoreComments && moreComments.length === 0 ? 'none' : 'block'}} 
                       type='submit' 
                       className='showMoreBtn' 
