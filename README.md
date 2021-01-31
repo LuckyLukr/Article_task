@@ -21,3 +21,14 @@ You will also see any lint errors in the console.
 ### `npm test`
 
 Launches the test runner in the interactive watch mode.\
+
+### `docker build -t sample:dev . `
+
+Build and tag the Docker image.\
+
+### `docker run -i -p 3001:3000 sample:dev`
+
+Runs the app at Docker.\
+Open [http://localhost:3001] to view it in the browser.
+
+Rewrite 3001 by your custom PORT. 

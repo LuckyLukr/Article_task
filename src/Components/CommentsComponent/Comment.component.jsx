@@ -1,6 +1,6 @@
 import React from 'react';
 
-import './Comments.component.css';
+import './Comment.component.css';
 
 
 function Comments(props) {

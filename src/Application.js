@@ -4,19 +4,14 @@ import './App.css';
 
 import Article from './Components/ArticleComponent/Article.component';
 import Comments from './Components/CommentsComponent/Comment.component';
-import MoreComments from './Components/CommentsComponent/MoreComments.component';
 
-function App() {
+function Application() {
   const [article, setArticle] = useState({})
   const [comments, setComments ] = useState([]);
   const [moreComments, setMoreComments ] = useState([]);
   const [showMoreComments, setShowMoreComments] = useState(false);
 
   useEffect(() => {
-    sortComments()
-  }, [comments.length,moreComments.length])
-
-  function sortComments() {
     comments.push(...moreComments);
     comments.sort((a, b) => {
         let dateA = a.date.toUpperCase();
@@ -30,8 +25,8 @@ function App() {
         return 0;
     });
     const removed = comments.splice(2)
-    return setMoreComments(removed);
-  }
+    setMoreComments(removed);
+  }, [comments.length, moreComments.length])
 
   function fetchArticle() {
     return new Promise(resolve => {
@@ -59,18 +54,18 @@ function App() {
 
   async function loadArticle() {
     const article = await fetchArticle();
-    return setArticle(article);
+    setArticle(article);
   }
 
   async function loadComments() {
     await loadArticle();
     const comments = await fetchComments();
-    return setComments(comments);
+    setComments(comments);
   }
 
   async function loadMoreComments() {
     const moreComments = await fetchMoreComments();
-    return setMoreComments(moreComments);
+    setMoreComments(moreComments);
   }
 
   function handleMoreComments() {
@@ -97,7 +92,7 @@ function App() {
     />
   );
   const moreCommentsList = moreComments.map( element => 
-    <MoreComments 
+    <Comments 
       id={element.id}
       author={element.author}
       time={moment.utc(element.date).format('HH:mm')}
@@ -152,4 +147,4 @@ function App() {
   );
 }
 
-export default App;
+export default Application;
