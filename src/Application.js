@@ -2,8 +2,9 @@ import React, { useState, useEffect} from 'react';
 import moment from 'moment';
 import './App.css';
 
+import Loader from './Components/LoaderComponent/Loader.component';
 import Article from './Components/ArticleComponent/Article.component';
-import Comments from './Components/CommentsComponent/Comment.component';
+import Comments from './Components/CommentComponent/Comment.component';
 
 function Application() {
   const [article, setArticle] = useState({})
@@ -12,6 +13,10 @@ function Application() {
   const [showMoreComments, setShowMoreComments] = useState(false);
 
   useEffect(() => {
+
+    loadArticle();
+    loadComments();
+
     comments.push(...moreComments);
     comments.sort((a, b) => {
         let dateA = a.date.toUpperCase();
@@ -79,12 +84,10 @@ function Application() {
     }
   }
 
-  loadArticle();
-  loadComments();
-
   const commentsList = comments.map( element => 
     <Comments 
       id={element.id}
+      key={element.id}
       author={element.author}
       time={moment.utc(element.date).format('HH:mm')}
       date={moment.utc(element.date).format('DD/MM/YYYY')}
@@ -94,6 +97,7 @@ function Application() {
   const moreCommentsList = moreComments.map( element => 
     <Comments 
       id={element.id}
+      key={element.id}
       author={element.author}
       time={moment.utc(element.date).format('HH:mm')}
       date={moment.utc(element.date).format('DD/MM/YYYY')}
@@ -104,18 +108,23 @@ function Application() {
   return (
     <div className="app">
 
-      <div style={{display: article.author === undefined ? 'block' : 'none'}} className='onLoading'>
-        <img src='https://upload.wikimedia.org/wikipedia/commons/b/b1/Loading_icon.gif' alt='loading...' style={{height: '150px'}} />
-      </div>
-      <div style={{display: article.author === undefined ? 'none' : 'flex'}} className='content'>
+      {article.author === undefined 
+      ?
+        <Loader />
+      :
+      <div className='content'>
         <Article 
           author={article.author} 
           text={article.text} 
           date={moment.utc(article.date).format('DD/MM/YYYY')} 
           time={moment.utc(article.date).format('HH:mm')}
-          />
+        />
 
-        <div style={{display: comments.length === 0 ? 'none' : 'grid'}} className='commentsContainer'>
+        {comments.length === 0 
+        ? 
+          <Loader />
+        :
+        <div className='commentsContainer'>
 
           <ul>
               {commentsList}
@@ -124,25 +133,23 @@ function Application() {
 
           <div className='showMoreBtnContainer'>
 
-              <div style={{display: showMoreComments && moreComments.length === 0 ? 'block' : 'none'}} className='onLoading'>
-                <img src='https://upload.wikimedia.org/wikipedia/commons/b/b1/Loading_icon.gif' alt='loading...' style={{height: '150px'}} />
-              </div>
-
-              <button style={{display: showMoreComments && moreComments.length === 0 ? 'none' : 'block'}} 
-                      type='submit' 
-                      className='showMoreBtn' 
-                      onClick={() => handleMoreComments()} >
+              {
+              showMoreComments && moreComments.length === 0 
+              ?
+                <Loader />
+              :
+              <button
+                  type='submit' 
+                  className='showMoreBtn' 
+                  onClick={() => handleMoreComments()} >
                   { showMoreComments ? <span>Hide comments</span> : <span>More comments</span>}
               </button>
-
+              }
           </div>
         </div>
-
-        <div style={{display: comments.length === 0 ? 'block' : 'none'}} className='onLoading'>
-          <img src='https://upload.wikimedia.org/wikipedia/commons/b/b1/Loading_icon.gif' alt='loading...' style={{height: '150px'}} />
-        </div>
-
+        }
       </div>
+      }
     </div>
   );
 }
